@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>🎮 Mandarin Game – 3 Nyawa 🎮</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Comic Neue', 'Segoe UI', cursive, sans-serif;
+            background: linear-gradient(145deg, #f9d56e 0%, #f8b042 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .game-container {
+            max-width: 700px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 60px 60px 40px 40px;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0 2px 5px rgba(255,255,255,0.7);
+            padding: 24px 20px 30px;
+            border: 6px solid #ff9f1c;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2ec4b6;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #1b6b64;
+            box-shadow: 0 5px 0 #1b6b64;
+        }
+
+        .score-box, .lives-box {
+            background-color: #ffbf69;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: #333;
+            text-shadow: none;
+            box-shadow: inset 0 -3px 0 #c46f0f;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .question-num {
+            background-color: #ffbf69;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: #333;
+            text-shadow: none;
+            box-shadow: inset 0 -3px 0 #c46f0f;
+        }
+
+        .heart {
+            color: #d00000;
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .question-area {
+            background-color: #fff3e0;
+            border-radius: 50px;
+            padding: 30px 20px;
+            margin: 20px 0 25px;
+            border: 4px dashed #ff9f1c;
+            box-shadow: inset 0 0 0 5px white, 0 10px 0 #cc7f1a;
+        }
+
+        .question-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #023047;
+            text-align: center;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .question-desc {
+            font-size: 1.2rem;
+            color: #e85d04;
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0 15px;
+        }
+
+        .option-btn {
+            background-color: #ffca3a;
+            border: none;
+            border-radius: 60px;
+            padding: 18px 8px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #3b2800;
+            box-shadow: 0 7px 0 #b2750e, 0 8px 12px rgba(0,0,0,0.2);
+            transition: all 0.07s ease;
+            cursor: pointer;
+            font-family: inherit;
+            line-height: 1.3;
+            word-break: break-word;
+            border: 2px solid #ffe48f;
+        }
+
+        .option-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #b2750e, 0 5px 10px rgba(0,0,0,0.1);
+        }
+
+        .option-btn.correct-feedback {
+            background-color: #6ede8a;
+            box-shadow: 0 4px 0 #1f8b4c;
+            transform: translateY(3px);
+        }
+
+        .option-btn.wrong-feedback {
+            background-color: #f25f5c;
+            box-shadow: 0 4px 0 #a13d3b;
+            transform: translateY(3px);
+        }
+
+        .option-btn:disabled {
+            opacity: 0.9;
+            cursor: not-allowed;
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #7e5e1a;
+        }
+
+        .feedback-area {
+            min-height: 70px;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 5px 0 15px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #a4161a;
+            background-color: #fff0f0;
+            padding: 10px;
+            border-radius: 30px;
+            border: 2px solid #ff8c8c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ok-btn {
+            background-color: #3a86ff;
+            color: white;
+            font-size: 1.8rem;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #1f4fa0;
+            cursor: pointer;
+            transition: 0.07s;
+            border: 2px solid #a4c9ff;
+            width: auto;
+            min-width: 150px;
+        }
+
+        .ok-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #1f4fa0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .next-btn {
+            background-color: #3a86ff;
+            color: white;
+            font-size: 2rem;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 60px;
+            font-weight: bold;
+            width: 100%;
+            box-shadow: 0 8px 0 #1f4fa0;
+            cursor: pointer;
+            transition: 0.07s;
+            border: 3px solid #a4c9ff;
+            font-family: inherit;
+        }
+
+        .next-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #1f4fa0;
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #1f4fa0;
+            pointer-events: none;
+        }
+
+        .restart-btn {
+            background-color: #fb5607;
+            color: white;
+            font-size: 1.8rem;
+            padding: 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            border: none;
+            box-shadow: 0 7px 0 #9e3507;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .finish-box {
+            text-align: center;
+            font-size: 2rem;
+            background-color: #ffb703;
+            padding: 30px;
+            border-radius: 80px;
+            color: #023047;
+        }
+
+        .finish-box .score-final {
+            font-size: 5rem;
+            font-weight: 800;
+            color: #9c1d1d;
+        }
+
+        @media (max-width: 500px) {
+            .game-container { padding: 15px; }
+            .question-text { font-size: 1.5rem; }
+            .option-btn { font-size: 1rem; padding: 15px 5px; }
+            .next-btn { font-size: 1.6rem; }
+            .header { font-size: 1.1rem; }
+            .heart { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <div class="header">
+            <div class="score-box" id="scoreDisplay">🏆 0</div>
+            <div class="lives-box" id="livesDisplay">❤️❤️❤️</div>
+            <div class="question-num" id="progressDisplay">📌 0/160</div>
+        </div>
+
+        <!-- area soal aktif -->
+        <div id="quizArea">
+            <div class="question-area">
+                <div class="question-text" id="questionText">Memuat soal...</div>
+                <div class="question-desc" id="questionDesc"></div>
+            </div>
+            <div class="options-grid" id="optionsContainer"></div>
+            <div class="feedback-area" id="feedbackArea">
+                <span id="feedbackIcon"></span>
+                <button class="ok-btn hidden" id="okButton">👍 OK</button>
+            </div>
+            <button class="next-btn" id="nextButton" disabled>➡️ Lanjut</button>
+        </div>
+
+        <!-- area finish (selesai semua soal) -->
+        <div id="finishArea" class="hidden">
+            <div class="finish-box">
+                <div>🎉 SELESAI! 🎉</div>
+                <div class="score-final" id="finalScore">0</div>
+                <div>dari 160 soal</div>
+                <button class="restart-btn" id="restartButton">🔄 Main Lagi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- DATABASE SOAL (160 butir) ----------
+            const allQuestions = [];
+
+            // 1. 50 Hanzi -> Indonesia
+            const hanziIndo = [
+                { q: "护照", opts: ["paspor", "visa", "tiket", "koper"], ans:0 },
+                { q: "签证", opts: ["paspor", "visa", "izin", "surat"], ans:1 },
+                { q: "入境卡", opts: ["kartu kedatangan", "formulir deklarasi", "tiket pesawat", "kartu identitas"], ans:0 },
+                { q: "海关申报单", opts: ["formulir bea cukai", "tiket masuk", "kartu pelajar", "surat izin"], ans:0 },
+                { q: "填写", opts: ["membaca", "mengisi", "menandatangani", "menulis"], ans:1 },
+                { q: "签名", opts: ["stempel", "tanda tangan", "foto", "nomor"], ans:1 },
+                { q: "行李架", opts: ["bagasi kabin", "rak bagasi", "troli", "koper"], ans:1 },
+                { q: "目的", opts: ["tujuan", "alamat", "maksud", "rencana"], ans:0 },
+                { q: "停留时间", opts: ["waktu tiba", "lama tinggal", "waktu terbang", "jadwal"], ans:1 },
+                { q: "指纹", opts: ["sidik jari", "foto", "tanda tangan", "cap"], ans:0 },
+                { q: "行李转盘", opts: ["konveyor bagasi", "troli bagasi", "tempat bagasi", "label bagasi"], ans:0 },
+                { q: "托运", opts: ["bagasi kabin", "bagasi tercatat", "bagasi tangan", "bagasi berlebih"], ans:1 },
+                { q: "损坏", opts: ["hilang", "rusak", "ketinggalan", "terbuka"], ans:1 },
+                { q: "丢失", opts: ["hilang", "rusak", "tertinggal", "dicuri"], ans:0 },
+                { q: "申报", opts: ["melapor", "menyatakan", "meminta", "mengisi"], ans:1 },
+                { q: "出租车", opts: ["taksi", "bus", "kereta", "angkot"], ans:0 },
+                { q: "网约车", opts: ["taksi online", "bus kota", "kereta api", "ojek"], ans:0 },
+                { q: "上车点", opts: ["titik penjemputan", "halte bus", "stasiun", "pintu keluar"], ans:0 },
+                { q: "导航", opts: ["peta", "navigasi", "arah", "petunjuk"], ans:1 },
+                { q: "高速费", opts: ["biaya tol", "biaya parkir", "biaya bensin", "biaya layanan"], ans:0 },
+                { q: "国际学生办公室", opts: ["kantor internasional", "kantor mahasiswa asing", "kantor urusan internasional", "kantor beasiswa"], ans:1 },
+                { q: "报到", opts: ["daftar ulang", "pendaftaran", "perkenalan", "orientasi"], ans:0 },
+                { q: "保安", opts: ["satpam", "guru", "petugas kebersihan", "dosen"], ans:0 },
+                { q: "指路", opts: ["bertanya jalan", "menunjukkan jalan", "mencari jalan", "mengikuti jalan"], ans:1 },
+                { q: "路口", opts: ["jalan", "persimpangan", "ujung jalan", "lampu merah"], ans:1 },
+                { q: "对面", opts: ["seberang", "samping", "belakang", "depan"], ans:0 },
+                { q: "预订", opts: ["reservasi", "pembayaran", "pembatalan", "konfirmasi"], ans:0 },
+                { q: "临时", opts: ["sementara", "tetap", "darurat", "cepat"], ans:0 },
+                { q: "价格", opts: ["harga", "diskon", "total", "biaya"], ans:0 },
+                { q: "入住登记", opts: ["check-in", "check-out", "daftar tamu", "kunci kamar"], ans:0 },
+                { q: "押金", opts: ["deposit", "biaya tambahan", "denda", "uang muka"], ans:0 },
+                { q: "房卡", opts: ["kartu kamar", "kunci kamar", "kartu akses", "kartu identitas"], ans:0 },
+                { q: "钥匙", opts: ["kunci", "gembok", "pintu", "lemari"], ans:0 },
+                { q: "收据", opts: ["kwitansi", "faktur", "struk", "nota"], ans:0 },
+                { q: "门禁", opts: ["jam malam", "pintu masuk", "larangan", "pagar"], ans:0 },
+                { q: "熄灯", opts: ["lampu dimatikan", "lampu menyala", "lampu redup", "lampu padam"], ans:0 },
+                { q: "室友", opts: ["teman sekelas", "teman sekamar", "teman satu kos", "tetangga"], ans:1 },
+                { q: "专业", opts: ["jurusan", "fakultas", "universitas", "gelar"], ans:0 },
+                { q: "年级", opts: ["angkatan", "kelas", "semester", "tahun ajaran"], ans:0 },
+                { q: "借", opts: ["meminjam", "mengembalikan", "memberi", "membeli"], ans:0 },
+                { q: "还", opts: ["meminjam", "mengembalikan", "memberi", "menjual"], ans:1 },
+                { q: "充电器", opts: ["charger", "adaptor", "baterai", "kabel data"], ans:0 },
+                { q: "转换插头", opts: ["stopkontak", "adaptor", "colokan", "kabel"], ans:1 },
+                { q: "衣架", opts: ["gantungan baju", "lemari", "hanger", "rak baju"], ans:0 },
+                { q: "拖鞋", opts: ["sandal", "sepatu", "kaos kaki", "sendal jepit"], ans:0 },
+                { q: "超市", opts: ["supermarket", "toko kelontong", "pasar", "minimarket"], ans:0 },
+                { q: "外卖", opts: ["makanan delivery", "bawa pulang", "restoran", "kantin"], ans:0 },
+                { q: "流量", opts: ["kuota data", "pulsa", "paket internet", "sinyal"], ans:0 },
+                { q: "套餐", opts: ["paket", "menu", "combo", "promo"], ans:0 },
+                { q: "微信支付", opts: ["WeChat Pay", "Alipay", "transfer bank", "dompet digital"], ans:0 }
+            ];
+            hanziIndo.forEach(item => allQuestions.push({ type: 'Hanzi → Indonesia', question: item.q, options: [...item.opts], answerIndex: item.ans }));
+
+            // 2. 50 Indonesia -> Hanzi
+            const indoHanzi = [
+                { q: "paspor", opts: ["护照", "签证", "身份证", "机票"], ans:0 },
+                { q: "visa", opts: ["护照", "签证", "入境卡", "居留证"], ans:1 },
+                { q: "kartu kedatangan", opts: ["入境卡", "海关单", "登记卡", "入境表"], ans:0 },
+                { q: "formulir deklarasi pabean", opts: ["海关申报单", "入境登记表", "行李申报", "报关单"], ans:0 },
+                { q: "mengisi", opts: ["填写", "签名", "阅读", "写字"], ans:0 },
+                { q: "tanda tangan", opts: ["签名", "盖章", "签字", "手印"], ans:0 },
+                { q: "rak bagasi", opts: ["行李架", "行李箱", "行李舱", "行李车"], ans:0 },
+                { q: "tujuan", opts: ["目的", "目标", "方向", "意图"], ans:0 },
+                { q: "lama tinggal", opts: ["停留时间", "居留期", "住宿时间", "逗留时间"], ans:0 },
+                { q: "sidik jari", opts: ["指纹", "手印", "指印", "拇指"], ans:0 },
+                { q: "konveyor bagasi", opts: ["行李转盘", "行李传送带", "行李带", "转盘"], ans:0 },
+                { q: "bagasi tercatat", opts: ["托运", "随身行李", "行李托运", "托运行李"], ans:0 },
+                { q: "rusak", opts: ["损坏", "破坏", "破碎", "故障"], ans:0 },
+                { q: "hilang", opts: ["丢失", "遗失", "不见", "丢"], ans:0 },
+                { q: "menyatakan (di bea cukai)", opts: ["申报", "报关", "声明", "报告"], ans:0 },
+                { q: "taksi", opts: ["出租车", "计程车", "的士", "打车"], ans:0 },
+                { q: "taksi online", opts: ["网约车", "滴滴", "约车", "打车软件"], ans:0 },
+                { q: "titik penjemputan", opts: ["上车点", "候车点", "集合点", "接送点"], ans:0 },
+                { q: "navigasi", opts: ["导航", "地图", "引导", "路线"], ans:0 },
+                { q: "biaya tol", opts: ["高速费", "过路费", "通行费", "路费"], ans:0 },
+                { q: "kantor mahasiswa internasional", opts: ["国际学生办公室", "留学生办公室", "国际部", "外事办"], ans:0 },
+                { q: "daftar ulang", opts: ["报到", "注册", "登记", "报名"], ans:0 },
+                { q: "satpam", opts: ["保安", "警卫", "门卫", "保卫"], ans:0 },
+                { q: "menunjukkan jalan", opts: ["指路", "带路", "引路", "领路"], ans:0 },
+                { q: "persimpangan", opts: ["路口", "十字路口", "交叉口", "街口"], ans:0 },
+                { q: "seberang", opts: ["对面", "对过", "前方", "旁边"], ans:0 },
+                { q: "reservasi", opts: ["预订", "预定", "预约", "预购"], ans:0 },
+                { q: "sementara", opts: ["临时", "暂时", "短期", "过渡"], ans:0 },
+                { q: "harga", opts: ["价格", "价钱", "费用", "单价"], ans:0 },
+                { q: "check-in (hotel)", opts: ["入住登记", "登记入住", "办理入住", "入住手续"], ans:0 },
+                { q: "deposit", opts: ["押金", "定金", "保证金", "抵押"], ans:0 },
+                { q: "kartu kamar", opts: ["房卡", "门卡", "钥匙卡", "住宿卡"], ans:0 },
+                { q: "kunci", opts: ["钥匙", "锁", "门锁", "钥匙扣"], ans:0 },
+                { q: "kwitansi", opts: ["收据", "发票", "凭证", "单据"], ans:0 },
+                { q: "jam malam", opts: ["门禁", "宵禁", "禁行", "限制"], ans:0 },
+                { q: "lampu dimatikan", opts: ["熄灯", "关灯", "灭灯", "停电"], ans:0 },
+                { q: "teman sekamar", opts: ["室友", "舍友", "同屋", "同居"], ans:0 },
+                { q: "jurusan", opts: ["专业", "科系", "学科", "领域"], ans:0 },
+                { q: "angkatan", opts: ["年级", "届", "级", "班"], ans:0 },
+                { q: "meminjam", opts: ["借", "贷", "借用", "借入"], ans:0 },
+                { q: "mengembalikan", opts: ["还", "归还", "退回", "返还"], ans:0 },
+                { q: "charger", opts: ["充电器", "电源", "电池", "充电宝"], ans:0 },
+                { q: "adaptor", opts: ["转换插头", "插座", "变压器", "插头"], ans:0 },
+                { q: "gantungan baju", opts: ["衣架", "衣挂", "挂衣架", "衣撑"], ans:0 },
+                { q: "sandal", opts: ["拖鞋", "凉鞋", "鞋", "布鞋"], ans:0 },
+                { q: "supermarket", opts: ["超市", "市场", "商场", "商店"], ans:0 },
+                { q: "makanan delivery", opts: ["外卖", "外送", "打包", "订购"], ans:0 },
+                { q: "kuota data", opts: ["流量", "数据", "网络", "套餐"], ans:0 },
+                { q: "paket (telepon)", opts: ["套餐", "配套", "计划", "组合"], ans:0 },
+                { q: "WeChat Pay", opts: ["微信支付", "支付宝", "支付", "付款"], ans:0 }
+            ];
+            indoHanzi.forEach(item => allQuestions.push({ type: 'Indonesia → Hanzi', question: item.q, options: [...item.opts], answerIndex: item.ans }));
+
+            // 3. 25 Melengkapi Kalimat
+            const melengkapi = [
+                { q: "你好，请出示护照和______。", opts: ["签证", "机票", "行李", "酒店"], ans:0 },
+                { q: "我是来______的。", opts: ["旅游", "工作", "留学", "探亲"], ans:2 },
+                { q: "我计划待______。", opts: ["一周", "一个月", "一年", "四年"], ans:2 },
+                { q: "请问，去行李转盘怎么走？一直往前走，然后______。", opts: ["左转", "右转", "直走", "往回走"], ans:1 },
+                { q: "师傅，去XX大学，______。", opts: ["南门", "东门", "西门", "北门"], ans:3 },
+                { q: "你有大行李吗？那得加点儿______。", opts: ["高速费", "行李费", "停车费", "服务费"], ans:1 },
+                { q: "你好，请问国际学生办公室怎么走？看到那栋红色的楼了吗？往前走，第二个路口______。", opts: ["左转", "右转", "直走", "回头"], ans:0 },
+                { q: "你走反了，应该往回走，经过食堂再______。", opts: ["左转", "右转", "直走", "上楼"], ans:1 },
+                { q: "老师您好，我在网上预订了宿舍，这是我的______。", opts: ["护照", "确认邮件", "录取通知书", "学生证"], ans:1 },
+                { q: "抱歉，系统里没有你的名字。你是什么时候______的？", opts: ["到达", "预订", "离开", "付款"], ans:1 },
+                { q: "别着急，学校附近有合作酒店，你可以先住两天。需要我帮你______吗？", opts: ["预订", "联系", "付款", "取消"], ans:1 },
+                { q: "你好，办理入住吗？请出示护照和______。", opts: ["学生证", "录取通知书", "身份证", "签证"], ans:1 },
+                { q: "请问押金是多少？押金500元，可以现金、微信或______。", opts: ["银行卡", "支付宝", "信用卡", "现金"], ans:1 },
+                { q: "这是收据和房卡，请保管好。房卡押金50，退房时______。", opts: ["丢失", "归还", "付款", "销毁"], ans:1 },
+                { q: "晚上11点半门禁，12点______。", opts: ["关门", "熄灯", "查房", "睡觉"], ans:1 },
+                { q: "不能用大功率电器，比如电饭煲、电热水壶，会______。", opts: ["爆炸", "跳闸", "着火", "停电"], ans:1 },
+                { q: "你好，我是新来的室友，我叫李明，从印尼来的。你在这儿住多久了？我住了两年了，大三。你呢，读什么______？", opts: ["年级", "专业", "学校", "宿舍"], ans:1 },
+                { q: "你有多余的衣架吗？我没买到。有，给你五个，够吗？不用还，我很多。还需要什么？你有转换插头吗？印尼的插头和中国______。", opts: ["一样", "不一样", "相同", "不同"], ans:1 },
+                { q: "附近哪里有超市？我想买被子枕头。学校东门有个物美超市，挺大的，什么都有。走路15分钟，也可以骑______。", opts: ["电动车", "自行车", "共享单车", "摩托车"], ans:2 },
+                { q: "王伟，你平时怎么点外卖？用美团或者饿了么，你下载了吗？还没，我没中国手机号，没法注册。那我帮你点吧，你先用我的。想吃什么？我想吃炒饭，______的。", opts: ["辣", "不辣", "酸", "甜"], ans:1 },
+                { q: "你好，我想办手机卡，留学生用的。您带护照了吗？带了，给您。您想办什么套餐？我们有39、59、99三种。哪种最划算？我主要用______，不太打电话。", opts: ["流量", "通话", "短信", "套餐"], ans:0 },
+                { q: "流量用完了怎么办？可以买加油包，10块钱5G，当月有效。有校园套餐吗？学生优惠？有的，凭学生证可以办校园卡，39元就有50G______。", opts: ["全国流量", "校园流量", "省内流量", "夜间流量"], ans:1 },
+                { q: "您选一下号码，这些是带8的吉祥号，这些是普通号。带8的有什么特别？8在中国是______数字。", opts: ["幸运", "倒霉", "普通", "特别"], ans:0 },
+                { q: "王伟，我办好手机卡了，你帮我看看能不能用？装上试试。有信号吗？有了有了！但是不能上网。设置里打开移动数据，看看______对不对。", opts: ["密码", "APN", "账号", "网络"], ans:1 },
+                { q: "怎么用微信支付？需要绑银行卡吧？对，得先有中国银行卡。你有卡吗？还没办，下周去办。那可以先收红包、收转账，但不能______。", opts: ["收款", "付款", "转账", "提现"], ans:1 }
+            ];
+            melengkapi.forEach(item => allQuestions.push({ type: 'Lengkapi kalimat', question: item.q, options: [...item.opts], answerIndex: item.ans }));
+
+            // 4. 25 Dialog
+            const dialog = [
+                { q: "入境时，官员问你来中国的目的，你应该怎么回答？", opts: ["我是来留学的。", "我计划待一年。", "这是我的护照。", "请按指纹。"], ans:0 },
+                { q: "如果行李丢失了，你应该去哪里询问？", opts: ["行李转盘", "行李查询柜台", "海关检查", "入境柜台"], ans:1 },
+                { q: "在出租车上，司机问你哪个校区，你应该说什么？", opts: ["去主校区", "去五道口", "去北门", "去XX大学"], ans:2 },
+                { q: "如果你迷路了，想向保安问路，最合适的问法是？", opts: ["请问国际学生办公室怎么走？", "我迷路了，能帮我吗？", "保安你好，去宿舍怎么走？", "厕所在哪儿？"], ans:1 },
+                { q: "宿舍管理员告诉你晚上11点半门禁，12点熄灯，如果你晚回来会怎样？", opts: ["被罚款", "要登记，三次晚归有通报", "不能进门", "被警告"], ans:1 },
+                { q: "你想向室友借转换插头，应该怎么说？", opts: ["你有转换插头吗？能借我吗？", "转换插头在哪儿？", "这个转换插头是你的吗？", "我要买转换插头"], ans:0 },
+                { q: "你想知道附近哪里有超市，应该怎么问？", opts: ["附近有超市吗？", "超市怎么走？", "哪里有卖被子的？", "物美超市在哪儿？"], ans:0 },
+                { q: "你还没有中国手机号，想点外卖，可以怎么办？", opts: ["自己下载美团", "请室友帮忙点", "去店里吃", "用现金买"], ans:1 },
+                { q: "在银行，你要开户，应该先做什么？", opts: ["排队", "取号", "填表", "找柜员"], ans:1 },
+                { q: "银行柜员问你办什么卡，你说留学卡，有什么好处？", opts: ["免年费，跨境汇款优惠", "可以透支", "有利息", "赠送礼品"], ans:0 },
+                { q: "你收到快递员电话说快递到了，但你不在学校，你可以怎么说？", opts: ["能放快递柜吗？", "我马上回来", "你等我一下", "退回去吧"], ans:0 },
+                { q: "你想寄快递回家，应该问什么？", opts: ["寄到印尼多少钱？", "这个快递几天能到？", "能上门取件吗？", "要填什么单子？"], ans:0 },
+                { q: "在医院，你肚子疼得厉害，应该挂什么科？", opts: ["内科", "外科", "急诊", "儿科"], ans:2 },
+                { q: "医生问你什么时候开始的，你怎么回答？", opts: ["昨天半夜", "肚子疼", "拉了三次", "没恶心"], ans:0 },
+                { q: "你想办学生卡，应该去哪里？", opts: ["国际学生办公室", "宿舍管理处", "学校食堂", "图书馆"], ans:0 },
+                { q: "如果你学生卡丢了，应该怎么办？", opts: ["挂失补办", "重新办", "找回来", "借别人的"], ans:0 },
+                { q: "在图书馆，你想借书，应该问什么？", opts: ["这本书能借多久？", "怎么预约座位？", "打印多少钱？", "图书馆几点关门？"], ans:0 },
+                { q: "你想开通网银，银行柜员可能会给你什么？", opts: ["U盾", "银行卡", "密码", "申请表"], ans:0 },
+                { q: "你收到短信取件码，去快递柜取件，应该怎么做？", opts: ["输入取件码", "扫码", "打电话", "等快递员"], ans:0 },
+                { q: "你打电话给10086查话费，按什么键转人工？", opts: ["1", "2", "0", "9"], ans:2 },
+                { q: "在微信里，怎么加好友？", opts: ["扫二维码", "搜索手机号", "附近的人", "以上都是"], ans:0 },
+                { q: "微信支付绑定银行卡需要什么？", opts: ["护照", "银行卡号", "手机号", "以上都是"], ans:3 },
+                { q: "你去派出所办临时住宿登记，需要带什么？", opts: ["护照", "宿舍证明", "照片", "护照 dan 宿舍证明"], ans:3 },
+                { q: "银行开户时，柜员让你设置密码，要注意什么？", opts: ["用生日", "用简单数字", "不要用生日或简单数字", "用123456"], ans:2 },
+                { q: "你第一次坐飞机来中国，在飞机上空姐给你入境卡，你该怎么做？", opts: ["填写", "扔掉", "交给空姐", "留着"], ans:0 }
+            ];
+            dialog.forEach(item => allQuestions.push({ type: 'Dialog', question: item.q, options: [...item.opts], answerIndex: item.ans }));
+
+            // 5. 10 Susun kata
+            const susun = [
+                { q: "Susunlah: 你 / 有 / 护照 / 吗 ?", opts: ["护照你有吗？", "你有护照吗？", "吗护照你有？", "有护照你吗？"], ans:1 },
+                { q: "Susunlah: 我 / 来 / 是 / 留学 / 的", opts: ["我是来留学的。", "我来是留学的。", "是我来留学的。", "留学我是来的。"], ans:0 },
+                { q: "Susunlah: 你 / 打算 / 待 / 多久 / 在 中国 ?", opts: ["你打算在中国待多久？", "你在中国打算待多久？", "你待多久打算在中国？", "在中国你打算待多久？"], ans:0 },
+                { q: "Susunlah: 请 / 出示 / 护照 / 和 / 签证", opts: ["请出示护照和签证。", "请出示签证和护照。", "护照和签证请出示。", "出示请护照和签证。"], ans:0 },
+                { q: "Susunlah: 我 / 行李 / 的 / 没找到", opts: ["我的行李没找到。", "行李我的没找到。", "没找到我的行李。", "我行李的没找到。"], ans:0 },
+                { q: "Susunlah: 去 / 怎么 / 行李转盘 / 走 ?", opts: ["去行李转盘怎么走？", "怎么走去行李转盘？", "行李转盘怎么去走？", "走怎么去行李转盘？"], ans:0 },
+                { q: "Susunlah: 我 / 宿舍 / 在 / 预订 / 了 / 网上", opts: ["我在网上预订了宿舍。", "我预订了宿舍在网上。", "网上我预订了宿舍。", "宿舍我在网上预订了。"], ans:0 },
+                { q: "Susunlah: 你 / 有 / 吗 / 转换插头 ?", opts: ["你有转换插头吗？", "转换插头你有吗？", "你有吗转换插头？", "有转换插头你吗？"], ans:0 },
+                { q: "Susunlah: 我 / 想 / 办 / 手机卡", opts: ["我想办手机卡。", "我办手机卡想。", "手机卡我想办。", "办手机卡我想。"], ans:0 },
+                { q: "Susunlah: 怎么 / 微信支付 / 使用 ?", opts: ["怎么使用微信支付？", "微信支付怎么使用？", "使用微信支付怎么？", "怎么微信支付使用？"], ans:0 }
+            ];
+            susun.forEach(item => allQuestions.push({ type: 'Susun kata', question: item.q, options: [...item.opts], answerIndex: item.ans }));
+
+            // ---------- GAME STATE ----------
+            let currentQuestions = [];
+            let currentIndex = 0;
+            let score = 0;
+            let lives = 3;
+            let answered = false;
+            let wrongAnswerPending = false; // menandakan sedang dalam mode salah (menunggu OK)
+            let audioCtx = null;
+
+            // Elemen DOM
+            const quizArea = document.getElementById('quizArea');
+            const finishArea = document.getElementById('finishArea');
+            const questionText = document.getElementById('questionText');
+            const questionDesc = document.getElementById('questionDesc');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const feedbackIcon = document.getElementById('feedbackIcon');
+            const feedbackArea = document.getElementById('feedbackArea');
+            const okButton = document.getElementById('okButton');
+            const nextButton = document.getElementById('nextButton');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const livesDisplay = document.getElementById('livesDisplay');
+            const progressDisplay = document.getElementById('progressDisplay');
+            const finalScore = document.getElementById('finalScore');
+            const restartButton = document.getElementById('restartButton');
+
+            // Fungsi audio
+            function initAudio() {
+                if (audioCtx) return;
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {}
+            }
+
+            async function playCorrect() {
+                if (!audioCtx) initAudio();
+                if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = 880;
+                gain.gain.value = 0.2;
+                osc.connect(gain).connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            }
+
+            async function playWrong() {
+                if (!audioCtx) initAudio();
+                if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.value = 220;
+                gain.gain.value = 0.15;
+                osc.connect(gain).connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+
+            // Acak array
+            function shuffleArray(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            // Siapkan soal baru
+            function prepareQuestions() {
+                let fresh = allQuestions.map(q => ({
+                    ...q,
+                    options: [...q.options]
+                }));
+                fresh = shuffleArray(fresh);
+                fresh.forEach(q => {
+                    const correctText = q.options[q.answerIndex];
+                    const newOpts = shuffleArray([...q.options]);
+                    const newIdx = newOpts.indexOf(correctText);
+                    q.options = newOpts;
+                    q.answerIndex = newIdx;
+                });
+                return fresh;
+            }
+
+            // Update tampilan nyawa
+            function updateLivesDisplay() {
+                let hearts = '';
+                for (let i = 0; i < 3; i++) {
+                    hearts += (i < lives) ? '❤️' : '🖤';
+                }
+                livesDisplay.innerHTML = hearts;
+            }
+
+            // Mulai game baru
+            function startNewGame() {
+                currentQuestions = prepareQuestions();
+                currentIndex = 0;
+                score = 0;
+                lives = 3;
+                answered = false;
+                wrongAnswerPending = false;
+                updateLivesDisplay();
+                renderQuestion();
+                toggleFinishScreen(false);
+            }
+
+            function toggleFinishScreen(showFinish) {
+                if (showFinish) {
+                    quizArea.classList.add('hidden');
+                    finishArea.classList.remove('hidden');
+                    finalScore.innerText = `${score} / 160`;
+                } else {
+                    quizArea.classList.remove('hidden');
+                    finishArea.classList.add('hidden');
+                }
+            }
+
+            function renderQuestion() {
+                if (currentIndex >= currentQuestions.length) {
+                    toggleFinishScreen(true);
+                    return;
+                }
+                const q = currentQuestions[currentIndex];
+                questionText.innerText = q.question;
+                questionDesc.innerText = '✨ ' + q.type + ' ✨';
+                optionsContainer.innerHTML = '';
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.dataset.optIndex = idx;
+                    btn.addEventListener('click', () => handleOptionClick(idx));
+                    optionsContainer.appendChild(btn);
+                });
+
+                // Sembunyikan OK, aktifkan next (awalnya disabled)
+                okButton.classList.add('hidden');
+                nextButton.disabled = true;
+                feedbackIcon.innerHTML = '';
+                answered = false;
+                wrongAnswerPending = false;
+                progressDisplay.innerText = `📌 ${currentIndex+1}/${currentQuestions.length}`;
+                scoreDisplay.innerText = `🏆 ${score}`;
+            }
+
+            async function handleOptionClick(selectedIdx) {
+                if (answered || wrongAnswerPending) return;
+
+                if (!audioCtx) initAudio();
+                if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+
+                const q = currentQuestions[currentIndex];
+                const isCorrect = (selectedIdx === q.answerIndex);
+                const allOptions = document.querySelectorAll('.option-btn');
+                allOptions.forEach(btn => btn.disabled = true);
+
+                // Tandai
+                allOptions.forEach((btn, idx) => {
+                    if (idx === q.answerIndex) {
+                        btn.classList.add('correct-feedback');
+                    } else if (idx === selectedIdx && !isCorrect) {
+                        btn.classList.add('wrong-feedback');
+                    }
+                });
+
+                if (isCorrect) {
+                    // Benar
+                    playCorrect();
+                    feedbackIcon.innerHTML = '✅✅✅ BENAR! ✅✅✅';
+                    score++;
+                    scoreDisplay.innerText = `🏆 ${score}`;
+                    answered = true;
+                    nextButton.disabled = false; // bisa lanjut
+                } else {
+                    // Salah
+                    playWrong();
+                    lives--;
+                    updateLivesDisplay();
+
+                    const correctAnswer = q.options[q.answerIndex];
+                    feedbackIcon.innerHTML = `❌ SALAH! Jawaban benar: <strong style="color:#155724;">${correctAnswer}</strong><br>Nyawa tersisa: ${lives} ❤️`;
+
+                    if (lives <= 0) {
+                        // Nyawa habis, restart setelah 2 detik
+                        feedbackIcon.innerHTML += '<br>😵 Nyawa habis! Game akan restart...';
+                        setTimeout(() => {
+                            startNewGame();
+                        }, 2000);
+                        return;
+                    }
+
+                    // Masih ada nyawa, tampilkan tombol OK
+                    wrongAnswerPending = true;
+                    okButton.classList.remove('hidden');
+                    // next tetap disabled
+                }
+            }
+
+            // Tombol OK untuk lanjut setelah salah
+            okButton.addEventListener('click', () => {
+                if (!wrongAnswerPending) return;
+                // Lanjut ke soal berikutnya
+                currentIndex++;
+                if (currentIndex < currentQuestions.length) {
+                    renderQuestion();
+                } else {
+                    toggleFinishScreen(true);
+                }
+            });
+
+            // Tombol next untuk lanjut setelah benar
+            nextButton.addEventListener('click', () => {
+                if (!answered || wrongAnswerPending) return;
+                currentIndex++;
+                if (currentIndex < currentQuestions.length) {
+                    renderQuestion();
+                } else {
+                    toggleFinishScreen(true);
+                }
+            });
+
+            restartButton.addEventListener('click', () => {
+                startNewGame();
+            });
+
+            // Mulai
+            startNewGame();
+        })();
+    </script>
+</body>
+</html>
