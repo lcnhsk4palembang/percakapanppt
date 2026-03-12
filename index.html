@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>🎮 Mandarin Game – 3 Nyawa 🎮</title>
+    <title>🎮 Mandarin Game – 10 Nyawa 🎮</title>
     <style>
         * {
             box-sizing: border-box;
@@ -263,7 +263,7 @@
     <div class="game-container" id="gameContainer">
         <div class="header">
             <div class="score-box" id="scoreDisplay">🏆 0</div>
-            <div class="lives-box" id="livesDisplay">❤️❤️❤️</div>
+            <div class="lives-box" id="livesDisplay">❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️</div>
             <div class="question-num" id="progressDisplay">📌 0/160</div>
         </div>
 
@@ -486,9 +486,9 @@
             let currentQuestions = [];
             let currentIndex = 0;
             let score = 0;
-            let lives = 3;
+            let lives = 10;   // <-- Diubah menjadi 10 nyawa
             let answered = false;
-            let wrongAnswerPending = false; // menandakan sedang dalam mode salah (menunggu OK)
+            let wrongAnswerPending = false;
             let audioCtx = null;
 
             // Elemen DOM
@@ -569,10 +569,10 @@
                 return fresh;
             }
 
-            // Update tampilan nyawa
+            // Update tampilan nyawa (10 hati)
             function updateLivesDisplay() {
                 let hearts = '';
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < 10; i++) {
                     hearts += (i < lives) ? '❤️' : '🖤';
                 }
                 livesDisplay.innerHTML = hearts;
@@ -583,7 +583,7 @@
                 currentQuestions = prepareQuestions();
                 currentIndex = 0;
                 score = 0;
-                lives = 3;
+                lives = 10;
                 answered = false;
                 wrongAnswerPending = false;
                 updateLivesDisplay();
